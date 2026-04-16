@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NSW Project Content — EnviroScope</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d2640; --teal: #1a6b7c; --accent: #3eb8c8; --white: #ffffff; --grey: #f5f7f9;
+    --text: #1a2332; --muted: #6b7a8d; --border: #d0dde8;
+    --nsw: #6d28d9; --nsw-light: rgba(109,40,217,0.07);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--grey); color: var(--text); min-height: 100vh; }
+  .header { background: var(--navy); padding: 36px 48px; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; right: -80px; top: -80px; width: 320px; height: 320px; border-radius: 50%; background: rgba(109,40,217,0.1); }
+  .header-inner { max-width: 720px; margin: 0 auto; position: relative; z-index: 1; }
+  .logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .logo-mark { width: 36px; height: 36px; background: var(--nsw); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .logo-mark svg { width: 20px; height: 20px; }
+  .logo-text { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); letter-spacing: 0.12em; text-transform: uppercase; }
+  .state-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(109,40,217,0.2); border: 1px solid rgba(109,40,217,0.4); color: #a78bfa; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; }
+  h1 { font-family: 'DM Serif Display', serif; font-size: 32px; color: var(--white); line-height: 1.25; margin-bottom: 10px; }
+  .header p { color: rgba(255,255,255,0.6); font-size: 14px; line-height: 1.7; max-width: 520px; }
+  .body { max-width: 720px; margin: 0 auto; padding: 40px 48px 80px; }
+  .intro-card { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--nsw); border-radius: 12px; padding: 24px 28px; margin-bottom: 40px; font-size: 14px; line-height: 1.8; color: var(--muted); }
+  .intro-card strong { color: var(--text); }
+  .pm-section { margin-bottom: 48px; }
+  .pm-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .pm-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--nsw), #a78bfa); display: flex; align-items: center; justify-content: center; font-family: 'DM Serif Display', serif; font-size: 17px; color: white; flex-shrink: 0; }
+  .pm-name { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--navy); }
+  .pm-title { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .project-list { display: flex; flex-direction: column; gap: 10px; }
+  .project-item { background: var(--white); border: 1.5px solid var(--border); border-radius: 10px; padding: 16px 20px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; cursor: pointer; transition: all 0.18s ease; }
+  .project-item:hover { border-color: var(--nsw); box-shadow: 0 2px 12px rgba(109,40,217,0.1); }
+  .project-item.selected { border-color: var(--nsw); background: var(--nsw-light); }
+  .project-item.selected .check-box { background: var(--nsw); border-color: var(--nsw); }
+  .project-item.selected .check-box::after { opacity: 1; }
+  .check-box { width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--border); flex-shrink: 0; transition: all 0.15s ease; position: relative; }
+  .check-box::after { content: ''; position: absolute; left: 5px; top: 2px; width: 6px; height: 10px; border: 2px solid white; border-left: none; border-top: none; transform: rotate(45deg); opacity: 0; transition: opacity 0.12s ease; }
+  .project-info { min-width: 0; }
+  .project-num { font-size: 11px; font-weight: 600; color: var(--nsw); letter-spacing: 0.06em; margin-bottom: 3px; }
+  .project-name { font-size: 14px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .project-client { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .status-badge { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+  .status-completed { background: rgba(46,204,135,0.12); color: #1a9e68; }
+  .status-pending { background: rgba(255,193,7,0.15); color: #c07800; }
+  .timing-field { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--border); grid-column: 1 / -1; }
+  .project-item.selected .timing-field { display: block; }
+  .timing-label { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 8px; }
+  .timing-options { display: flex; flex-wrap: wrap; gap: 8px; }
+  .timing-btn { background: none; border: 1.5px solid var(--border); border-radius: 6px; padding: 6px 14px; font-size: 12px; font-family: 'DM Sans', sans-serif; color: var(--muted); cursor: pointer; transition: all 0.14s ease; }
+  .timing-btn:hover, .timing-btn.active { border-color: var(--nsw); color: var(--nsw); background: var(--nsw-light); }
+  .timing-btn.active { font-weight: 600; }
+  .notes-input { width: 100%; border: 1.5px solid var(--border); border-radius: 7px; padding: 9px 13px; font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--text); resize: none; outline: none; transition: border-color 0.14s; margin-top: 10px; }
+  .notes-input:focus { border-color: var(--nsw); }
+  .notes-input::placeholder { color: var(--muted); }
+  .submit-area { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 28px 32px; margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .submit-summary { font-size: 13px; color: var(--muted); }
+  .submit-summary strong { color: var(--navy); font-size: 16px; display: block; margin-bottom: 2px; }
+  .submit-btn { background: var(--navy); color: white; border: none; padding: 14px 32px; border-radius: 8px; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.16s ease; display: flex; align-items: center; gap: 8px; }
+  .submit-btn:hover { background: var(--nsw); transform: translateY(-1px); }
+  .success-state { display: none; text-align: center; padding: 48px 32px; }
+  .success-icon { width: 64px; height: 64px; background: linear-gradient(135deg, var(--nsw), #a78bfa); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+  .success-icon svg { width: 30px; height: 30px; }
+  .success-state h2 { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--navy); margin-bottom: 8px; }
+  .success-state p { color: var(--muted); font-size: 14px; }
+  .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 12px; margin-top: 8px; }
+  @media (max-width: 600px) {
+    .header { padding: 28px 24px; } .body { padding: 28px 20px 60px; } h1 { font-size: 26px; }
+    .project-item { grid-template-columns: auto 1fr; } .status-badge { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo-area">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span class="logo-text">EnviroScope Maintenance</span>
+    </div>
+    <div class="state-badge">
+      <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
+      New South Wales
+    </div>
+    <h1>Project Content<br><em>Check-In</em></h1>
+    <p>Hey Giovanni! Just tick the jobs below you're happy for me to follow up on — I'll reach out on Thursdays to grab a few quick details. I'll handle all the writing from there!</p>
+  </div>
+</div>
+
+<div class="body" id="formBody">
+
+  <div class="intro-card">
+    <strong>What I need from you:</strong> Tick any completed or current projects you're comfortable sharing — scope of work, size, finishes, anything worth highlighting. <strong>Takes 2 minutes — promise!</strong>
+  </div>
+
+  <div class="pm-section">
+    <div class="pm-header">
+      <div class="pm-avatar">G</div>
+      <div>
+        <div class="pm-name">Giovanni Testa</div>
+        <div class="pm-title">Project Manager — NSW</div>
+      </div>
+    </div>
+    <div class="section-label">Your recent projects</div>
+    <div class="project-list">
+
+      <div class="project-item" onclick="toggleProject(this)">
+        <div class="check-box"></div>
+        <div class="project-info"><div class="project-num">P001723</div><div class="project-name">North Richmond</div><div class="project-client">RSL Life Care</div></div>
+        <span class="status-badge status-completed">Completed</span>
+        <div class="timing-field"><div class="timing-label">When can I follow up?</div><div class="timing-options"><button class="timing-btn" onclick="setTiming(this,event)">This week</button><button class="timing-btn" onclick="setTiming(this,event)">Next week</button><button class="timing-btn" onclick="setTiming(this,event)">This month</button><button class="timing-btn" onclick="setTiming(this,event)">Next month</button></div><textarea class="notes-input" rows="2" placeholder="Any extra notes? (optional)"></textarea></div>
+      </div>
+
+      <div class="project-item" onclick="toggleProject(this)">
+        <div class="check-box"></div>
+        <div class="project-info"><div class="project-num">P001781</div><div class="project-name">The Foundry — Patch and Paint</div><div class="project-client">ARA Building Services</div></div>
+        <span class="status-badge status-completed">Completed</span>
+        <div class="timing-field"><div class="timing-label">When can I follow up?</div><div class="timing-options"><button class="timing-btn" onclick="setTiming(this,event)">This week</button><button class="timing-btn" onclick="setTiming(this,event)">Next week</button><button class="timing-btn" onclick="setTiming(this,event)">This month</button><button class="timing-btn" onclick="setTiming(this,event)">Next month</button></div><textarea class="notes-input" rows="2" placeholder="Any extra notes? (optional)"></textarea></div>
+      </div>
+
+      <div class="project-item" onclick="toggleProject(this)">
+        <div class="check-box"></div>
+        <div class="project-info"><div class="project-num">P001793</div><div class="project-name">DCJ Ballina</div><div class="project-client">Built</div></div>
+        <span class="status-badge status-completed">Completed</span>
+        <div class="timing-field"><div class="timing-label">When can I follow up?</div><div class="timing-options"><button class="timing-btn" onclick="setTiming(this,event)">This week</button><button class="timing-btn" onclick="setTiming(this,event)">Next week</button><button class="timing-btn" onclick="setTiming(this,event)">This month</button><button class="timing-btn" onclick="setTiming(this,event)">Next month</button></div><textarea class="notes-input" rows="2" placeholder="Any extra notes? (optional)"></textarea></div>
+      </div>
+
+      <div class="project-item" onclick="toggleProject(this)">
+        <div class="check-box"></div>
+        <div class="project-info"><div class="project-num">P001822</div><div class="project-name">Kieser Mosman — Repaint</div><div class="project-client">Kieser National Clinic Support</div></div>
+        <span class="status-badge status-completed">Completed</span>
+        <div class="timing-field"><div class="timing-label">When can I follow up?</div><div class="timing-options"><button class="timing-btn" onclick="setTiming(this,event)">This week</button><button class="timing-btn" onclick="setTiming(this,event)">Next week</button><button class="timing-btn" onclick="setTiming(this,event)">This month</button><button class="timing-btn" onclick="setTiming(this,event)">Next month</button></div><textarea class="notes-input" rows="2" placeholder="Any extra notes? (optional)"></textarea></div>
+      </div>
+
+      <div class="project-item" onclick="toggleProject(this)">
+        <div class="check-box"></div>
+        <div class="project-info"><div class="project-num">P001718</div><div class="project-name">Tweed Heads South — Internal Painting Works</div><div class="project-client">Australia Post</div></div>
+        <span class="status-badge status-completed">Completed</span>
+        <div class="timing-field"><div class="timing-label">When can I follow up?</div><div class="timing-options"><button class="timing-btn" onclick="setTiming(this,event)">This week</button><button class="timing-btn" onclick="setTiming(this,event)">Next week</button><button class="timing-btn" onclick="setTiming(this,event)">This month</button><button class="timing-btn" onclick="setTiming(this,event)">Next month</button></div><textarea class="notes-input" rows="2" placeholder="Any extra notes? (optional)"></textarea></div>
+      </div>
+
+      <div class="project-item" onclick="toggleProject(this)">
+        <div class="check-box"></div>
+        <div class="project-info"><div class="project-num">P001574</div><div class="project-name">BP Eastern Creek</div><div class="project-client">WSP Services</div></div>
+        <span class="status-badge status-completed">Completed</span>
+        <div class="timing-field"><div class="timing-label">When can I follow up?</div><div class="timing-options"><button class="timing-btn" onclick="setTiming(this,event)">This week</button><button class="timing-btn" onclick="setTiming(this,event)">Next week</button><button class="timing-btn" onclick="setTiming(this,event)">This month</button><button class="timing-btn" onclick="setTiming(this,event)">Next month</button></div><textarea class="notes-input" rows="2" placeholder="Any extra notes? (optional)"></textarea></div>
+      </div>
+
+      <div class="project-item" onclick="toggleProject(this)">
+        <div class="check-box"></div>
+        <div class="project-info"><div class="project-num">P001413</div><div class="project-name">Bow Bowing World of Learning — Internal & External</div><div class="project-client">G8 Education</div></div>
+        <span class="status-badge status-completed">Completed</span>
+        <div class="timing-field"><div class="timing-label">When can I follow up?</div><div class="timing-options"><button class="timing-btn" onclick="setTiming(this,event)">This week</button><button class="timing-btn" onclick="setTiming(this,event)">Next week</button><button class="timing-btn" onclick="setTiming(this,event)">This month</button><button class="timing-btn" onclick="setTiming(this,event)">Next month</button></div><textarea class="notes-input" rows="2" placeholder="Any extra notes? (optional)"></textarea></div>
+      </div>
+
+      <div class="project-item" onclick="toggleProject(this)">
+        <div class="check-box"></div>
+        <div class="project-info"><div class="project-num">P001821</div><div class="project-name">CBA North Sydney BCH — 191423</div><div class="project-client">ARA Building Services</div></div>
+        <span class="status-badge status-completed">Completed</span>
+        <div class="timing-field"><div class="timing-label">When can I follow up?</div><div class="timing-options"><button class="timing-btn" onclick="setTiming(this,event)">This week</button><button class="timing-btn" onclick="setTiming(this,event)">Next week</button><button class="timing-btn" onclick="setTiming(this,event)">This month</button><button class="timing-btn" onclick="setTiming(this,event)">Next month</button></div><textarea class="notes-input" rows="2" placeholder="Any extra notes? (optional)"></textarea></div>
+      </div>
+
+      <div class="project-item" onclick="toggleProject(this)">
+        <div class="check-box"></div>
+        <div class="project-info"><div class="project-num">P001825</div><div class="project-name">Myer MEB Works — Macquarie</div><div class="project-client">Samways Building & Construction</div></div>
+        <span class="status-badge status-completed">Completed</span>
+        <div class="timing-field"><div class="timing-label">When can I follow up?</div><div class="timing-options"><button class="timing-btn" onclick="setTiming(this,event)">This week</button><button class="timing-btn" onclick="setTiming(this,event)">Next week</button><button class="timing-btn" onclick="setTiming(this,event)">This month</button><button class="timing-btn" onclick="setTiming(this,event)">Next month</button></div><textarea class="notes-input" rows="2" placeholder="Any extra notes? (optional)"></textarea></div>
+      </div>
+
+      <div class="project-item" onclick="toggleProject(this)">
+        <div class="check-box"></div>
+        <div class="project-info"><div class="project-num">P001864</div><div class="project-name">Milton Park Viacon — Timesheet Additional Works</div><div class="project-client">Viacon Projects</div></div>
+        <span class="status-badge status-pending">Pending</span>
+        <div class="timing-field"><div class="timing-label">When can I follow up?</div><div class="timing-options"><button class="timing-btn" onclick="setTiming(this,event)">This week</button><button class="timing-btn" onclick="setTiming(this,event)">Next week</button><button class="timing-btn" onclick="setTiming(this,event)">This month</button><button class="timing-btn" onclick="setTiming(this,event)">Next month</button></div><textarea class="notes-input" rows="2" placeholder="Any extra notes? (optional)"></textarea></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="submit-area">
+    <div class="submit-summary">
+      <strong id="selectedCount">0 projects selected</strong>
+      I'll follow up on Thursdays — email or quick call, whatever works!
+    </div>
+    <button class="submit-btn" onclick="submitForm()">
+      Send my selections
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+
+  <div class="success-state" id="successState">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2>Thanks Giovanni!</h2>
+    <p>Got your selections — I'll be in touch this Thursday. Appreciate your help!</p>
+  </div>
+
+</div>
+
+<script>
+  function toggleProject(el) { el.classList.toggle('selected'); updateCount(); }
+  function setTiming(btn, e) { e.stopPropagation(); btn.parentElement.querySelectorAll('.timing-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+  function updateCount() { const n = document.querySelectorAll('.project-item.selected').length; document.getElementById('selectedCount').textContent = n + (n === 1 ? ' project selected' : ' projects selected'); }
+  function submitForm() {
+    if (document.querySelectorAll('.project-item.selected').length === 0) { alert('Please tick at least one project!'); return; }
+    document.getElementById('formBody').style.display = 'none';
+    document.getElementById('successState').style.display = 'block';
+  }
+</script>
+</body>
+</html>
